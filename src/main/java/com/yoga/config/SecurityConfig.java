@@ -47,7 +47,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
          return httpSecurity
-                 .cors(Customizer.withDefaults()) // Enable CORS
+                 .cors(cors-> cors.configurationSource(corsConfigurationSource())) // Enable CORS
                  .csrf(csrf->csrf.disable())
                  .authorizeHttpRequests(request-> request
                          .requestMatchers("/auth/**","/attendance/**").permitAll()
