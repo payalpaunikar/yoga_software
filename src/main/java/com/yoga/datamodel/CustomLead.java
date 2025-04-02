@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "lead")
-public class Lead {
+@Table(name = "custom_lead")
+public class CustomLead {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,9 +47,9 @@ public class Lead {
     @Column(name = "statusMode")
     private LeadStatus statusMode;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "lead")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "customLead")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "lead" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "customLead" }, allowSetters = true)
     private List<LeadLog> leadLogs = new ArrayList<>();
 
     public Long getId() {

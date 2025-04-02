@@ -2,7 +2,7 @@ package com.yoga.controller;
 
 
 
-import com.yoga.datamodel.Lead;
+import com.yoga.datamodel.CustomLead;
 import com.yoga.datamodel.LeadLog;
 import com.yoga.dto.request.RemarkRequest;
 import com.yoga.service.LeadService;
@@ -25,36 +25,36 @@ public class LeadController {
     private LeadService leadService;
 
     @PostMapping("/createNewLead")
-    public ResponseEntity<Lead> addNewLead(@RequestBody Lead lead) {
-        Lead savedLead = leadService.addNewLead(lead);
-        return ResponseEntity.ok(savedLead);
+    public ResponseEntity<CustomLead> addNewLead(@RequestBody CustomLead customLead) {
+        CustomLead savedCustomLead = leadService.addNewLead(customLead);
+        return ResponseEntity.ok(savedCustomLead);
     }
 
     @PutMapping("/{leadId}")
-    public ResponseEntity<Lead> updateLead(@PathVariable("leadId")Long leadId,@RequestBody Lead lead){
-        return ResponseEntity.ok(leadService.updateLead(leadId,lead));
+    public ResponseEntity<CustomLead> updateLead(@PathVariable("leadId")Long leadId, @RequestBody CustomLead customLead){
+        return ResponseEntity.ok(leadService.updateLead(leadId, customLead));
     }
 
     @PostMapping("/{id}/addLogs")
-    public ResponseEntity<Lead> addLogsToLead(@PathVariable Long id, @RequestBody List<LeadLog> leadLogs) {
-        Lead updatedLead = leadService.addLogsToLead(id, leadLogs);
-        return ResponseEntity.ok(updatedLead);
+    public ResponseEntity<CustomLead> addLogsToLead(@PathVariable Long id, @RequestBody List<LeadLog> leadLogs) {
+        CustomLead updatedCustomLead = leadService.addLogsToLead(id, leadLogs);
+        return ResponseEntity.ok(updatedCustomLead);
     }
     @GetMapping("/getlead/{id}")
-    public ResponseEntity<Lead> getLeadById(@PathVariable Long id) {
-        Lead lead = leadService.getLeadById(id); // Fetch the lead with logs
-        return ResponseEntity.ok(lead);
+    public ResponseEntity<CustomLead> getLeadById(@PathVariable Long id) {
+        CustomLead customLead = leadService.getLeadById(id); // Fetch the lead with logs
+        return ResponseEntity.ok(customLead);
     }
     @GetMapping("/getAllLeads")
-    public ResponseEntity<List<Lead>> getAllLeads() {
-        List<Lead> leads = leadService.getAllLeads();
-        return ResponseEntity.ok(leads);
+    public ResponseEntity<List<CustomLead>> getAllLeads() {
+        List<CustomLead> customLeads = leadService.getAllLeads();
+        return ResponseEntity.ok(customLeads);
     }
 
     @PostMapping("/remark/{id}/remark")
-    public ResponseEntity<Lead> addRemark(@PathVariable Long id, @RequestBody RemarkRequest remarkRequest) {
-        Lead updatedLead = leadService.addRemark(id, remarkRequest.getRemark(), remarkRequest.getRemarkdate());
-        return ResponseEntity.ok(updatedLead);
+    public ResponseEntity<CustomLead> addRemark(@PathVariable Long id, @RequestBody RemarkRequest remarkRequest) {
+        CustomLead updatedCustomLead = leadService.addRemark(id, remarkRequest.getRemark(), remarkRequest.getRemarkdate());
+        return ResponseEntity.ok(updatedCustomLead);
     }
 
     @DeleteMapping("/deleteLead/{id}")

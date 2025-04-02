@@ -10,9 +10,11 @@ import com.yoga.dto.response.BranchWithBatchResponse;
 import com.yoga.dto.response.StudentResponseWithBatch;
 import com.yoga.exception.UserNotFoundException;
 import com.yoga.repository.BranchRepository;
+import com.yoga.repository.EmployeeRepository;
 import com.yoga.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,10 +26,12 @@ public class BranchService {
 
     private StudentRepository studentRepository;
 
-    @Autowired
-    public BranchService(BranchRepository branchRepository,StudentRepository studentRepository){
+    private EmployeeRepository employeeRepository;
+
+    public BranchService(BranchRepository branchRepository, StudentRepository studentRepository, EmployeeRepository employeeRepository) {
         this.branchRepository = branchRepository;
         this.studentRepository = studentRepository;
+        this.employeeRepository = employeeRepository;
     }
 
     public BranchResponse addBranch(BranchRequest branchRequest){
@@ -41,11 +45,12 @@ public class BranchService {
         return newBranchResponse;
     }
 
+    @Transactional
     public String deleteBranch(Long branchId){
         Branch existingBranch = branchRepository.findById(branchId)
                 .orElseThrow(()-> new UserNotFoundException("Branch is not found with : "+branchId+" id"));
 
-
+        employeeRepository.updateBranchToNull(branchId);
         branchRepository.delete(existingBranch);
 
         return "Branch is delete successfully";

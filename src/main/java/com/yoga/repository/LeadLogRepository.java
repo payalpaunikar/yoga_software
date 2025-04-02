@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LeadLogRepository extends JpaRepository<LeadLog, Long> {
-    void deleteByLeadId(Long id);
+    void deleteByCustomLeadId(Long leadId);
 }

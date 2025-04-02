@@ -24,7 +24,7 @@ public class LeadLog {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "leadLogs" }, allowSetters = true)
-    private Lead lead;
+    private CustomLead customLead;
 
     public Long getId() {
         return id;
@@ -50,11 +50,11 @@ public class LeadLog {
         this.status = status;
     }
 
-    public Lead getLead() {
-        return lead;
+    public CustomLead getLead() {
+        return customLead;
     }
 
-    public void setLead(Lead lead) {
-        this.lead = lead;
+    public void setLead(CustomLead customLead) {
+        this.customLead = customLead;
     }
 }
