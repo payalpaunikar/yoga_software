@@ -48,10 +48,10 @@ public class StudentRequest {
 
     private Double height;  //height store in ft
 
-    private String socialNetworkingId;
+    private String program;
 
     private Double totalFees;
 
-    private Double initialPayment;
+  //  private Double initialPayment;
 
 }

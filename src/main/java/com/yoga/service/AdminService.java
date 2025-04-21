@@ -3,6 +3,7 @@ package com.yoga.service;
 
 import com.yoga.component.Role;
 import com.yoga.datamodel.Branch;
+import com.yoga.datamodel.CustomLead;
 import com.yoga.datamodel.Employee;
 import com.yoga.datamodel.User;
 import com.yoga.dto.StudentFeesAlertDto;
@@ -10,10 +11,7 @@ import com.yoga.dto.request.EmployeeRequest;
 import com.yoga.dto.response.EmployeeResponse;
 import com.yoga.exception.EmployeeAlreadyExitException;
 import com.yoga.exception.UserNotFoundException;
-import com.yoga.repository.BranchRepository;
-import com.yoga.repository.EmployeeRepository;
-import com.yoga.repository.StudentFeeRepository;
-import com.yoga.repository.UserRepository;
+import com.yoga.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,17 +40,21 @@ public class AdminService {
 
     private StudentFeeRepository studentFeeRepository;
 
+    private LeadRepository leadRepository;
+
     Logger logger = LoggerFactory.getLogger(AdminService.class);
 
 
     @Autowired
     public AdminService(UserRepository userRepository,PasswordEncoder passwordEncoder,
-                        EmployeeRepository employeeRepository,BranchRepository branchRepository,StudentFeeRepository studentFeeRepository){
+                        EmployeeRepository employeeRepository,BranchRepository branchRepository,
+                        StudentFeeRepository studentFeeRepository,LeadRepository leadRepository){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.employeeRepository = employeeRepository;
         this.branchRepository = branchRepository;
         this.studentFeeRepository = studentFeeRepository;
+        this.leadRepository = leadRepository;
     }
 
 
@@ -83,10 +85,27 @@ public class AdminService {
     }
 
 
-
+    @Transactional
     public String deleteEmployee(Long empId){
         Employee existingEmployee = employeeRepository.findById(empId)
                 .orElseThrow(()-> new UserNotFoundException("employee with : "+empId+" id is not found in the system"));
+
+        // 1. Get the admin user
+        User adminUser = userRepository.findByRole(Role.ADMIN)
+                .orElseThrow(() -> new RuntimeException("Admin user not found"));
+
+        Long getUserId = existingEmployee.getUser().getUserId();
+
+        //Reassign leads
+        List<CustomLead> leads = leadRepository.findLeadByUserId(getUserId);
+
+
+         if(leads.size() >0) {
+             for (CustomLead lead : leads) {
+                 lead.setUser(adminUser);
+             }
+             leadRepository.saveAll(leads);
+         }
 
         //I adde casced property if user(parent) deleted then automatically employee(child) also deleted
         userRepository.delete(existingEmployee.getUser());
@@ -200,14 +219,17 @@ public class AdminService {
 
     private EmployeeResponse convertUserToEmployeeResponse(User user,EmployeeResponse employeeResponse){
        employeeResponse.setEmail(user.getEmail());
+       employeeResponse.setUserId(user.getUserId());
        return employeeResponse;
     }
 
     private EmployeeResponse convertEmployeeToEmployeeResponse(Employee employee,EmployeeResponse employeeResponse){
         employeeResponse.setFirstName(employee.getFirstName());
         employeeResponse.setEmployeeId(employee.getEmployeeId());
+        employeeResponse.setUserId(employee.getUser().getUserId());
         employeeResponse.setAddress(employee.getAddress());
         employeeResponse.setFatherName(employee.getFatherName());
+        employeeResponse.setEmail(employee.getUser().getEmail());
         employeeResponse.setLastName(employee.getLastName());
         employeeResponse.setJoiningDate(String.valueOf(employee.getJoiningDate()));
         employeeResponse.setMobileNumber(employee.getMobileNumber());

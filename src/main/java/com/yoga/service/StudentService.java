@@ -20,9 +20,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
+import java.time.ZoneId;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -58,21 +60,21 @@ public class StudentService {
         newStudent.setBatch(existingBatch);
         Student saveStudent =  studentRepository.save(newStudent);
 
-        StudentFee studentFee = new StudentFee(saveStudent, studentRequest.getTotalFees(), studentRequest.getInitialPayment(),LocalDate.now(),30);
-         studentFeeRepository.save(studentFee);
+//        StudentFee studentFee = new StudentFee(saveStudent, studentRequest.getTotalFees(),0.0,LocalDate.now(),30);
+//         studentFeeRepository.save(studentFee);
 
-         StudentFeeTransaction studentFeeTransaction = new StudentFeeTransaction();
-         studentFeeTransaction.setStudent(saveStudent);
-         studentFeeTransaction.setAmount(studentRequest.getInitialPayment());
-         studentFeeTransaction.setPaymentMode(PaymentMode.BY_CASH);
-         studentFeeTransaction.setPaymentDate(LocalDate.now());
-
-         studentFeeTransactionRepo.save(studentFeeTransaction);
+//         StudentFeeTransaction studentFeeTransaction = new StudentFeeTransaction();
+//         studentFeeTransaction.setStudent(saveStudent);
+//         studentFeeTransaction.setAmount(0.0);
+//         studentFeeTransaction.setPaymentMode(PaymentMode.BY_CASH);
+//         studentFeeTransaction.setPaymentDate(LocalDate.now());
+//
+//         studentFeeTransactionRepo.save(studentFeeTransaction);
 
         StudentResponse studentResponse = new StudentResponse();
         studentResponse = convertStudentToStudentResponse(saveStudent,studentResponse);
         studentResponse.setTotalFees(studentRequest.getTotalFees());
-        studentResponse.setInitialPayment(studentRequest.getInitialPayment());
+      //  studentResponse.setInitialPayment(0.0);
         return studentResponse;
     }
 
@@ -86,48 +88,48 @@ public class StudentService {
         existingStudent = convertStudentRequestToStudent(studentRequest,existingStudent);
         Student saveStudent = studentRepository.save(existingStudent);
 
-        StudentFee studentFee= studentFeeRepository.findStudentFeeByStudentId(existingStudent.getStudentId());
+//        StudentFee studentFee= studentFeeRepository.findStudentFeeByStudentId(existingStudent.getStudentId());
+//
+//        List<StudentFeeTransaction> studentFeeTransactionList = studentFeeTransactionRepo.findStudentFeeTransactionByStudentId(studentId);
+//
+//        if (studentFeeTransactionList.size()==1){
+//            //logger.info("Student transaction is equal to 1");
+//            studentFee.setPaidAmount(0.0);
+//            studentFee.setTotalFee(studentRequest.getTotalFees());
+//            studentFee.setRemainingAmount(studentRequest.getTotalFees()-0.0);
+//            studentFeeRepository.save(studentFee);
+//
+//          studentFeeTransactionList = studentFeeTransactionList.stream().map(studentFeeTransaction -> {
+//                studentFeeTransaction.setAmount(0.0);
+//                return studentFeeTransaction;
+//            }).toList();
+//
+//          studentFeeTransactionRepo.saveAll(studentFeeTransactionList);
+//        }
+//        else {
+//
+//            studentFee.setTotalFee(studentRequest.getTotalFees());
+//
+//            Double feesPaid = 0.0;
+//
+//            for (StudentFeeTransaction studentFeeTransaction : studentFeeTransactionList) {
+//                feesPaid = feesPaid+studentFeeTransaction.getAmount();
+//                //logger.info("fees paid : " + feesPaid);
+//            }
+//
+//            studentFee.setRemainingAmount(studentRequest.getTotalFees() - feesPaid);
+//           // logger.info("student total fees : "+studentRequest.getTotalFees());
+//           // logger.info("Student fee is : "+studentFee.getRemainingAmount());
+//            studentFee.setFeeStatus(studentFee.getRemainingAmount() == 0.0 ? FeeStatus.PAID : FeeStatus.PENDING);
 
-        List<StudentFeeTransaction> studentFeeTransactionList = studentFeeTransactionRepo.findStudentFeeTransactionByStudentId(studentId);
-
-        if (studentFeeTransactionList.size()==1){
-            //logger.info("Student transaction is equal to 1");
-            studentFee.setPaidAmount(studentRequest.getInitialPayment());
-            studentFee.setTotalFee(studentRequest.getTotalFees());
-            studentFee.setRemainingAmount(studentRequest.getTotalFees()-studentRequest.getInitialPayment());
-            studentFeeRepository.save(studentFee);
-
-          studentFeeTransactionList = studentFeeTransactionList.stream().map(studentFeeTransaction -> {
-                studentFeeTransaction.setAmount(studentRequest.getInitialPayment());
-                return studentFeeTransaction;
-            }).toList();
-
-          studentFeeTransactionRepo.saveAll(studentFeeTransactionList);
-        }
-        else {
-
-            studentFee.setTotalFee(studentRequest.getTotalFees());
-
-            Double feesPaid = 0.0;
-
-            for (StudentFeeTransaction studentFeeTransaction : studentFeeTransactionList) {
-                feesPaid = feesPaid+studentFeeTransaction.getAmount();
-                //logger.info("fees paid : " + feesPaid);
-            }
-
-            studentFee.setRemainingAmount(studentRequest.getTotalFees() - feesPaid);
-           // logger.info("student total fees : "+studentRequest.getTotalFees());
-           // logger.info("Student fee is : "+studentFee.getRemainingAmount());
-            studentFee.setFeeStatus(studentFee.getRemainingAmount() == 0.0 ? FeeStatus.PAID : FeeStatus.PENDING);
-
-            //logger.info("student fees : " + studentFee);
-            studentFeeRepository.save(studentFee);
-        }
+//            //logger.info("student fees : " + studentFee);
+//            studentFeeRepository.save(studentFee);
+    //    }
 
         StudentResponse studentResponse = new StudentResponse();
         studentResponse = convertStudentToStudentResponse(saveStudent,studentResponse);
-        studentResponse.setTotalFees(studentRequest.getTotalFees());
-        studentResponse.setInitialPayment(studentRequest.getInitialPayment());
+//        studentResponse.setTotalFees(studentRequest.getTotalFees());
+       // studentResponse.setInitialPayment(0.0);
         return studentResponse;
     }
 
@@ -160,19 +162,36 @@ public class StudentService {
         studentDetailsResponse.setAddress(existingStudent.getAddress());
         studentDetailsResponse.setEmail(existingStudent.getEmail());
         studentDetailsResponse.setJoiningDate(String.valueOf(existingStudent.getJoiningDate()));
-        studentDetailsResponse.setSocialNetworkingId(existingStudent.getSocialNetworkingId());
+        studentDetailsResponse.setProgram(existingStudent.getProgram());
         studentDetailsResponse.setNationality(existingStudent.getNationality());
         studentDetailsResponse.setHeight(existingStudent.getHeight());
         studentDetailsResponse.setWeight(existingStudent.getWeight());
         studentDetailsResponse.setEndingDate(String.valueOf(existingStudent.getEndingDate()));
+       studentDetailsResponse.setTotalFees(existingStudent.getTotalFee());
 
+        Optional<StudentFee> studentFee = studentFeeRepository.findStudentFeeByStudentId(studentId);
 
-        StudentFee studentFee = studentFeeRepository.findStudentFeeByStudentId(studentId);
-        studentDetailsResponse.setTotalFees(studentFee.getTotalFee());
-        studentDetailsResponse.setRemaingAmount(studentFee.getRemainingAmount());
+        if (studentFee.isEmpty()){
+            studentDetailsResponse.setRemaingAmount(existingStudent.getTotalFee());
+            Date nextPaymentDate = calculateNextInstallmentDate(Date.from(existingStudent.getJoiningDate().atStartOfDay(ZoneId.systemDefault()).toInstant()),30);
 
-        if (!studentFee.getTotalFee().equals(null)){
-            studentDetailsResponse.setNextPaymentDate(String.valueOf(studentFee.getNextInstallmentDate()));
+            // ✅ Format the date properly
+            SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String formattedDate = outputFormat.format(nextPaymentDate);
+
+            studentDetailsResponse.setNextPaymentDate(formattedDate);
+            studentDetailsResponse.setTransaction(new ArrayList<>());
+
+            return studentDetailsResponse;
+        }
+
+        StudentFee getStudentFee = studentFee.get();
+
+        //studentDetailsResponse.setTotalFees(studentFee.getTotalFee());
+        studentDetailsResponse.setRemaingAmount(getStudentFee.getRemainingAmount());
+
+        if (!getStudentFee.getTotalFee().equals(null)){
+            studentDetailsResponse.setNextPaymentDate(String.valueOf(getStudentFee.getNextInstallmentDate()));
         }
 
 
@@ -185,9 +204,9 @@ public class StudentService {
                     transactionResponse.setPaymentDate(String.valueOf(studentFeeTransaction.getPaymentDate()));
                     transactionResponse.setPaymentMode(studentFeeTransaction.getPaymentMode());
 
-                    if (studentFeeTransaction.getPaymentDate().equals(studentFee.getFirstPaymentDate())){
-                        studentDetailsResponse.setInitialPayment(studentFeeTransaction.getAmount());
-                    }
+//                    if (studentFeeTransaction.getPaymentDate().equals(getStudentFee.getFirstPaymentDate())){
+//                        studentDetailsResponse.setInitialPayment(studentFeeTransaction.getAmount());
+//                    }
 
                     return transactionResponse;
                 }).toList();
@@ -251,8 +270,8 @@ public class StudentService {
         newStudent.setEndingDate(LocalDate.parse(studentRequest.getEndingDate()));
         newStudent.setWeight(studentRequest.getWeight());
         newStudent.setHeight(studentRequest.getHeight());
-        newStudent.setSocialNetworkingId(studentRequest.getSocialNetworkingId());
-
+        newStudent.setProgram(studentRequest.getProgram());
+        newStudent.setTotalFee(studentRequest.getTotalFees());
 
         return newStudent;
     }
@@ -272,7 +291,7 @@ public class StudentService {
         newStudentResponse.setAddress(student.getAddress());
         newStudentResponse.setEmail(student.getEmail());
         newStudentResponse.setJoiningDate(String.valueOf(student.getJoiningDate()));
-        newStudentResponse.setSocialNetworkingId(student.getSocialNetworkingId());
+        newStudentResponse.setProgram(student.getProgram());
         newStudentResponse.setNationality(student.getNationality());
         newStudentResponse.setHeight(student.getHeight());
         newStudentResponse.setWeight(student.getWeight());
@@ -282,5 +301,11 @@ public class StudentService {
 
 
 
+    public Date calculateNextInstallmentDate(Date startDate, int days){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(startDate);
+        calendar.add(Calendar.DAY_OF_MONTH,days);
+        return calendar.getTime();
+    }
 
 }

@@ -57,6 +57,8 @@ public class Student {
 
     private LocalDate endingDate;
 
+    private Double totalFee;
+
 //    private LocalTime  timePreference;
 
 //    @Enumerated(EnumType.STRING)
@@ -66,7 +68,7 @@ public class Student {
 
     private Double height;  //height store in ft
 
-    private String socialNetworkingId;
+    private String program;
 
    // private Long studentFees;  //student fees is varrie
 

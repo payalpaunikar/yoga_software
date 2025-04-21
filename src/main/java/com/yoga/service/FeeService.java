@@ -16,8 +16,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.module.ResolutionException;
 import java.time.LocalDate;
 import java.util.Calendar;
+import java.util.Optional;
 
 @Service
 public class FeeService {
@@ -39,32 +41,54 @@ public class FeeService {
 
       @Transactional
       public String payInstallment(Long studentId, StudentIntallmentTransactionRequest transactionRequest){
-        StudentFee studentFee = studentFeeRepository.findStudentFeeByStudentId(studentId);
+
+        Student student = studentRepository.findById(studentId).orElseThrow(
+                ()-> new ResolutionException("student with id : "+studentId+" is not found"));
+
+        Optional<StudentFee> studentFee = studentFeeRepository.findStudentFeeByStudentId(studentId);
+
+        if (studentFee.isEmpty()){
+            StudentFee newStudentFees = new StudentFee(student,student.getTotalFee() ,
+                    transactionRequest.getAmount(),LocalDate.now(),30);
+         studentFeeRepository.save(newStudentFees);
+
+         StudentFeeTransaction studentFeeTransaction = new StudentFeeTransaction();
+         studentFeeTransaction.setStudent(student);
+         studentFeeTransaction.setAmount(transactionRequest.getAmount());
+         studentFeeTransaction.setPaymentMode(transactionRequest.getPaymentMode());
+         studentFeeTransaction.setPaymentDate(LocalDate.now());
+
+         studentFeeTransactionRepo.save(studentFeeTransaction);
+
+         return "Payment is done";
+        }
+
+         StudentFee getStudentFee = studentFee.get();
 
           StudentFeeTransaction studentFeeTransaction = new StudentFeeTransaction();
           studentFeeTransaction.setAmount(transactionRequest.getAmount());
-          studentFeeTransaction.setStudent(studentFee.getStudent());
+          studentFeeTransaction.setStudent(getStudentFee.getStudent());
           studentFeeTransaction.setPaymentMode(transactionRequest.getPaymentMode());
           studentFeeTransaction.setPaymentDate(LocalDate.now());
 
           studentFeeTransactionRepo.save(studentFeeTransaction);
 
-          studentFee.setPaidAmount(studentFee.getPaidAmount()+transactionRequest.getAmount());
-          studentFee.setRemainingAmount(studentFee.getTotalFee()-studentFee.getPaidAmount());
+          getStudentFee.setPaidAmount(getStudentFee.getPaidAmount()+transactionRequest.getAmount());
+          getStudentFee.setRemainingAmount(getStudentFee.getTotalFee()-getStudentFee.getPaidAmount());
 
-          if (studentFee.getRemainingAmount() > 0){
+          if (getStudentFee.getRemainingAmount() > 0){
               Calendar calendar = Calendar.getInstance();
-              calendar.setTime(studentFee.getNextInstallmentDate());
+              calendar.setTime(getStudentFee.getNextInstallmentDate());
               calendar.add(Calendar.DAY_OF_MONTH,30);
-              studentFee.setNextInstallmentDate(calendar.getTime());
-              studentFee.setFeeStatus(FeeStatus.PENDING);
+              getStudentFee.setNextInstallmentDate(calendar.getTime());
+              getStudentFee.setFeeStatus(FeeStatus.PENDING);
           }
           else{
-              studentFee.setFeeStatus(FeeStatus.PAID);
-              studentFee.setNextInstallmentDate(null);
+              getStudentFee.setFeeStatus(FeeStatus.PAID);
+              getStudentFee.setNextInstallmentDate(null);
           }
 
-          studentFeeRepository.save(studentFee);
+          studentFeeRepository.save(getStudentFee);
 
           return "Installment payment recorded";
 

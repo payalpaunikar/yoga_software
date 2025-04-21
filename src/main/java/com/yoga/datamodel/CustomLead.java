@@ -47,6 +47,10 @@ public class CustomLead {
     @Column(name = "statusMode")
     private LeadStatus statusMode;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "customLead")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "customLead" }, allowSetters = true)
@@ -138,5 +142,13 @@ public class CustomLead {
 
     public void setLeadLogs(List<LeadLog> leadLogs) {
         this.leadLogs = leadLogs;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

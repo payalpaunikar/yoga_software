@@ -13,6 +13,7 @@ import lombok.Setter;
 public class EmployeeResponse {
 
     private Long employeeId;
+    private Long userId;
     private String email;
     private String firstName;
     private String fatherName;

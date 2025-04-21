@@ -1,6 +1,7 @@
 package com.yoga.datamodel;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yoga.component.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -32,5 +33,6 @@ public class User {
     private Role role;
 
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
+    @JsonIgnore
     private Employee employee;
 }

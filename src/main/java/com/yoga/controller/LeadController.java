@@ -2,14 +2,17 @@ package com.yoga.controller;
 
 
 
+import com.yoga.component.MyUserDetails;
 import com.yoga.datamodel.CustomLead;
 import com.yoga.datamodel.LeadLog;
+import com.yoga.datamodel.User;
 import com.yoga.dto.request.RemarkRequest;
 import com.yoga.service.LeadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,8 +28,9 @@ public class LeadController {
     private LeadService leadService;
 
     @PostMapping("/createNewLead")
-    public ResponseEntity<CustomLead> addNewLead(@RequestBody CustomLead customLead) {
-        CustomLead savedCustomLead = leadService.addNewLead(customLead);
+    public ResponseEntity<CustomLead> addNewLead(@RequestBody CustomLead customLead, Authentication authentication) {
+        User user = ((MyUserDetails) authentication.getPrincipal()).getUser();
+        CustomLead savedCustomLead = leadService.addNewLead(customLead,user);
         return ResponseEntity.ok(savedCustomLead);
     }
 
@@ -45,9 +49,9 @@ public class LeadController {
         CustomLead customLead = leadService.getLeadById(id); // Fetch the lead with logs
         return ResponseEntity.ok(customLead);
     }
-    @GetMapping("/getAllLeads")
-    public ResponseEntity<List<CustomLead>> getAllLeads() {
-        List<CustomLead> customLeads = leadService.getAllLeads();
+    @GetMapping("/user/{userId}/getAllLeads")
+    public ResponseEntity<List<CustomLead>> getAllLeads(@PathVariable("userId")Long userId) {
+        List<CustomLead> customLeads = leadService.getAllLeads(userId);
         return ResponseEntity.ok(customLeads);
     }
 

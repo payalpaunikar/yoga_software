@@ -52,7 +52,7 @@ public class StudentDetailsResponse {
 
     private Double height;  //height store in ft
 
-    private String socialNetworkingId;
+    private String program;
 
     private Double totalFees;
 
@@ -60,7 +60,7 @@ public class StudentDetailsResponse {
 
     private String nextPaymentDate;
 
-    private Double initialPayment;
+   // private Double initialPayment;
 
     List<TransactionResponse> transaction;
 }

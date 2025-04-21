@@ -10,14 +10,15 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface StudentFeeRepository extends JpaRepository<StudentFee,Long> {
 
     @Query("SELECT s FROM StudentFee s WHERE s.student.studentId= :studentId")
-    StudentFee findStudentFeeByStudentId(@Param("studentId")Long studentId);
+    Optional<StudentFee> findStudentFeeByStudentId(@Param("studentId")Long studentId);
 
-    ;
+
 
     @Query(value = """
     SELECT s.student_id AS studentId, s.first_name AS firstName, s.father_name AS fatherName,

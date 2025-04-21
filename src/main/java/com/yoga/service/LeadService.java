@@ -2,6 +2,7 @@ package com.yoga.service;
 
 import com.yoga.datamodel.CustomLead;
 import com.yoga.datamodel.LeadLog;
+import com.yoga.datamodel.User;
 import com.yoga.exception.UserNotFoundException;
 import com.yoga.repository.LeadLogRepository;
 import com.yoga.repository.LeadRepository;
@@ -21,7 +22,10 @@ public class LeadService {
 
     @Autowired
     private LeadLogRepository leadLogRepository;
-    public CustomLead addNewLead(CustomLead customLead) {
+
+
+    public CustomLead addNewLead(CustomLead customLead, User user) {
+        customLead.setUser(user);
         return leadRepository.save(customLead);
     }
 
@@ -45,8 +49,8 @@ public class LeadService {
         return customLead; // Return the updated lead
     }
 
-    public List<CustomLead> getAllLeads() {
-        return leadRepository.findAll();
+    public List<CustomLead> getAllLeads(Long userId) {
+        return leadRepository.findLeadByUserId(userId);
     }
 
     public CustomLead addRemark(Long id, String remark, LocalDate remarkDate) {
