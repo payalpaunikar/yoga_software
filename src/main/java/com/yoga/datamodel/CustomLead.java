@@ -1,5 +1,6 @@
 package com.yoga.datamodel;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import com.yoga.component.LeadStatus;
@@ -49,11 +50,13 @@ public class CustomLead {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "customLead")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "customLead" }, allowSetters = true)
+   // @JsonIgnoreProperties(value = { "customLead" }, allowSetters = true)
+    @JsonIgnore
     private List<LeadLog> leadLogs = new ArrayList<>();
 
     public Long getId() {
