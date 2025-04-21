@@ -35,7 +35,7 @@ public class LeadService {
                 .orElseThrow(() -> new EntityNotFoundException("Lead not found with ID: " + id));
         // Set the lead for each LeadLog
         for (LeadLog log : leadLogs) {
-            log.setLead(customLead); // Ensure Lead is set in each log
+            log.setCustomLead(customLead); // Ensure Lead is set in each log
         }
         // Add the logs to the lead
         customLead.getLeadLogs().addAll(leadLogs);

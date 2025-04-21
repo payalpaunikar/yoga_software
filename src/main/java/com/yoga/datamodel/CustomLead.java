@@ -5,6 +5,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import com.yoga.component.LeadStatus;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -12,6 +16,11 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "custom_lead")
 public class CustomLead {
@@ -54,104 +63,10 @@ public class CustomLead {
     private User user;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "customLead")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+   // @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
    // @JsonIgnoreProperties(value = { "customLead" }, allowSetters = true)
-    @JsonIgnore
+    @JsonIgnoreProperties(value = { "customLead" }) // Prevent recursion
     private List<LeadLog> leadLogs = new ArrayList<>();
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getWhatappNumber() {
-        return whatappNumber;
-    }
-
-    public void setWhatappNumber(String whatappNumber) {
-        this.whatappNumber = whatappNumber;
-    }
-
-    public LocalDate getFoundOn() {
-        return foundOn;
-    }
-
-    public void setFoundOn(LocalDate foundOn) {
-        this.foundOn = foundOn;
-    }
-
-    public String getRemark() {
-        return remark;
-    }
-
-    public void setRemark(String remark) {
-        this.remark = remark;
-    }
-
-    public LocalDate getRemarkdate() {
-        return remarkdate;
-    }
-
-    public void setRemarkdate(LocalDate remarkdate) {
-        this.remarkdate = remarkdate;
-    }
-
-    public LeadStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(LeadStatus status) {
-        this.status = status;
-    }
-
-    public LeadStatus getStatusMode() {
-        return statusMode;
-    }
-
-    public void setStatusMode(LeadStatus statusMode) {
-        this.statusMode = statusMode;
-    }
-
-    public List<LeadLog> getLeadLogs() {
-        return leadLogs;
-    }
-
-    public void setLeadLogs(List<LeadLog> leadLogs) {
-        this.leadLogs = leadLogs;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
 }

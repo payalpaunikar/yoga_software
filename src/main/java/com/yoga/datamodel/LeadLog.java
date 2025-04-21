@@ -1,11 +1,21 @@
 package com.yoga.datamodel;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.yoga.component.LeadStatus;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 @Entity
 public class LeadLog {
 
@@ -23,38 +33,9 @@ public class LeadLog {
     private LeadStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = { "leadLogs" }, allowSetters = true)
+    //@JsonIgnoreProperties(value = { "leadLogs" }, allowSetters = true)
+    @JsonIgnore
     private CustomLead customLead;
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public LocalDate getLogDate() {
-        return logDate;
-    }
-
-    public void setLogDate(LocalDate logDate) {
-        this.logDate = logDate;
-    }
-
-    public LeadStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(LeadStatus status) {
-        this.status = status;
-    }
-
-    public CustomLead getLead() {
-        return customLead;
-    }
-
-    public void setLead(CustomLead customLead) {
-        this.customLead = customLead;
-    }
 }
