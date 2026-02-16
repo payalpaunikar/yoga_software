@@ -36,15 +36,14 @@ public class SecurityConfig {
 
       private JWTAuthenticationFilter jwtAuthenticationFilter;
 
-
-      @Autowired
-      public SecurityConfig(MyUserDetailsService myUserDetailsService,JWTAuthenticationFilter jwtAuthenticationFilter){
-          this.myUserDetailsService = myUserDetailsService;
-          this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-      }
+    @Autowired
+    public SecurityConfig(MyUserDetailsService myUserDetailsService, JWTAuthenticationFilter jwtAuthenticationFilter) {
+        this.myUserDetailsService = myUserDetailsService;
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity,CustomAuthEntryPoint customAuthEntryPoint) throws Exception {
 
          return httpSecurity
                  .cors(cors-> cors.configurationSource(corsConfigurationSource())) // Enable CORS
@@ -62,6 +61,9 @@ public class SecurityConfig {
                          .requestMatchers("/receipt/**").hasAnyRole("ADMIN","EMPLOYEE")
                          .anyRequest().authenticated())
                  .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+//                 .exceptionHandling(ex -> ex
+//                         .authenticationEntryPoint(customAuthEntryPoint) // Set the authentication entry point
+//                 )
                  .httpBasic(Customizer.withDefaults())
                  .sessionManagement(session-> session
                          .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
